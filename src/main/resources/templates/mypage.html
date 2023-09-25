@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <!-- 구글폰트 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500&display=swap" rel="stylesheet">
+
+    <style>
+*{
+	font-family: 'Gothic A1', sans-serif;
+}
+body {
+	width: 1024px;
+	height: 860px;
+	margin: 50px auto;
+	overflow: auto;
+	max-height: 860px;
+}
+
+header{
+
+}
+
+.top-header{
+    display : flex;
+    padding-left : 50px;
+}
+
+.top-header > a{
+    align-self : center;
+}
+
+.top-header > h2 {
+    margin-left : 30px;
+}
+
+header > nav{
+    width : 100%;
+    height : 200px;
+    border : 1px solid black;
+    display: flex;
+    align-items : center;
+}
+
+.profile{
+    height : 150px;
+    width : 150px;
+    margin-left : 40px;
+    margin-right : 60px;
+}
+
+.profileimg{
+    height : 150px;
+    width : 150px;
+    border : 1px solid gray;
+    border-radius: 50%;
+}
+
+.profile-menu{
+    display:flex;
+    margin-top : 20px;
+}
+
+.profileupdate-btn{
+    position : relative;
+    bottom:40px;
+    left : 110px;
+}
+
+.follow-box{
+    display : flex;
+    width : 500px;
+    height : 150px;
+    justify-content : space-around;
+}
+
+.follow{
+    line-height: 100px;
+}
+
+.no{
+    line-height: 0px;
+    text-align: center;
+}
+
+.update-btn{
+
+}
+
+main{
+    width : 80% auto;
+    height : 1000px;
+    text-align : center;
+    border : 1px solid gray;
+    line-height : 300px;
+    margin-top : 80px;
+}
+.board-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+            background-color: #f2f2f2;
+            margin-bottom: 20px;
+        }
+
+        #board_id{
+            border: 1px solid black;
+            text-align: left;
+        }
+        #board_contents{
+            border: 1px solid black;
+            height:100px;
+        }
+        #board_img{
+            border: 1px solid black;
+            height: 200px;
+        }
+        #board_hits_like{
+            display: flex;
+            justify-content:center;
+        }
+
+    </style>
+
+</head>
+<body>
+<header>
+    <div class="top-header">
+        <a href="/list"> <img src="/images/logo.png" max-width="100%" height="40"/> </a>
+        <h2><span th:text="${dto.nickname}"></span>'s Page</h2>
+    </div>
+    <nav>
+        <div class="profile">
+            <div class="profileimg">프로필사진</div>
+            <div class="profile-menu">
+                <button class="profileupdate-btn"><a href="">◎</a></button>
+            </div>
+        </div>
+        <div class="follow-box">
+            <div class="follow">팔로워
+                <div class="no">100</div>
+            </div>
+            <div class="follow">팔로잉
+                <div class="no">100</div>
+            </div>
+        </div>
+        <button class="update-btn"><a href="/profile/update">내 정보 수정</a></button>
+    </nav>
+</header>
+<main>
+    <h2 th:text="${dto.nickname} + '님의 게시물'"></h2>
+    <th:block th:each="board : ${myBoards}">
+        <div class="board-item">
+            <div id = board_id th:text="${board.email}">id</div>
+            <div id = board_img>
+                <!-- 이미지 썸네일을 표시하는 이미지 태그 -->
+                <img th:if="${not #strings.isEmpty(board.filename)}"
+                     th:src="@{file:///C:/upload/user1/0ccb83f9-129e-46de-b4f4-b046a82b833d/${board.dirpath}/${board.filename}}"
+                     alt="Thumbnail" width="200" height="auto" class="thumbnail">
+            </div>
+            <div id=board_contents class="contents" th:text="${board.contents}">contents</div>
+            <div th:text="${board.date}">date</div>
+            <div id="board_hits_like">
+                <div th:text="${board.hits}">hits</div>
+                <div th:text="${board.like_count}">like</div>
+            </div>
+        </div>
+    </th:block>
+</main>
+
+
+
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<hr/>
+
+</body>
+</html>
