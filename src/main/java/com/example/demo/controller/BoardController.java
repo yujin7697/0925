@@ -141,9 +141,9 @@ public class BoardController {
         return "redirect:/list";
 
     }
-    @PostMapping("/delete")
-    public String delete(@RequestParam Long number, RedirectAttributes redirectAttributes) {
-        log.info("POST /delete number: " + number);
+    @DeleteMapping("/delete/{number}")
+    public String delete(@PathVariable Long number, RedirectAttributes redirectAttributes) {
+        log.info("DELETE /delete/{number} number: " + number);
 
         // 게시물 번호로 해당 게시물 정보 가져오기
         Optional<Board> boardOptional = boardRepository.findByNum(number);
@@ -159,4 +159,5 @@ public class BoardController {
 
         return "redirect:/mypage"; // 삭제 후 리스트 페이지로 리다이렉트
     }
+
 }

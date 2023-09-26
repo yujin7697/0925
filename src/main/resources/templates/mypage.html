@@ -177,7 +177,7 @@
                         <button>수정</button>
                         <a th:href="@{'/update?number=' + ${board.number}}">수정</a>
                         <!-- 게시물 삭제 버튼 추가 -->
-                        <button>삭제</button>
+                        <button class="delete_btn" data-no="${board.number}">삭제</button>
 
                     </div>
                 </div>
@@ -199,7 +199,10 @@
     </div>
 </main>
 
-
+<!-- axios -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js" integrity="sha512-uMtXmF28A2Ab/JJO2t/vYhlaa/3ahUOgj1Zf27M5rOo8/+fcTUVH0/E0ll68njmjrLqOBjXM3V9NiPFL5ywWPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- common.js   -->
+<script src="/js/common.js"></script>
 
 <script>
     // menu-btn을 클릭하면 세부 버튼 영역을 표시/숨김
@@ -214,6 +217,21 @@
                 subMenu.style.display = "none"; // 숨김
             }
         });
+    });
+
+    const delete_btn_el = document.querySelector('.delete_btn');
+    delete_btn_el.addEventListener('click', function () {
+    const number = encodeURIComponent(delete_btn_el.dataset.no); // 게시물 번호를 URL로 인코딩
+    axios.delete("/delete?number=" + number)
+        .then(
+            response => {
+                console.log(response);
+                if (response.status === 200) {
+                    location.href = "/list";
+                }
+            }
+        )
+        .catch(error => console.log(error));
     });
 
 
