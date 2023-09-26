@@ -93,6 +93,8 @@ public class BoardService {
 
     @Transactional(rollbackFor = SQLException.class)
     public boolean deleteBoard(Long number){
+        System.out.println("deleteBoard할거임!!!!!!!!! : " + number);
+
         Optional<Board> boardOptional = boardRepository.findByNum(number);
 
         if (boardOptional.isPresent()) {
@@ -120,6 +122,8 @@ public class BoardService {
 
     @Transactional(rollbackFor = SQLException.class)
     public boolean updateBoard(Long number, String newContents) {
+
+        System.out.println("updateBoard!!!!!"+number);
         // 게시물 번호로 해당 게시물 정보 가져오기
         Optional<Board> boardOptional = boardRepository.findByNum(number);
 

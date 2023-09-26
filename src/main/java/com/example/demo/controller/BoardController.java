@@ -17,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -94,7 +95,7 @@ public class BoardController {
     }
 
     @GetMapping("/update")
-    public String update(Long number, Model model){
+    public void update(@RequestParam Long number, Model model){
         log.info("GET /update no : " + number);
 
         // 게시물 번호로 해당 게시물 정보 가져오기
@@ -103,30 +104,59 @@ public class BoardController {
         if (boardOptional.isPresent()) {
             Board board = boardOptional.get();
             BoardDto dto = new BoardDto();
+            dto.setNumber(board.getNumber());
             dto.setContents(board.getContents());
+            dto.setEmail(board.getEmail());
+            dto.setDate(board.getDate());
+            dto.setHits(board.getHits());
+            dto.setLike_count(board.getLike_count());
+            System.out.println("dto : " + dto);
 
             // 모델에 게시물 정보 전달
             model.addAttribute("boardDto", dto);
 
-            return "update"; // 수정 폼 페이지로 이동
-        } else {
-            // 게시물이 존재하지 않을 경우 예외 처리 (이 부분을 적절히 처리하세요)
-            return "redirect:/error"; // 에러 페이지로 리다이렉트 또는 예외 처리 방식에 따라 다르게 처리
         }
     }
 
     @PostMapping("/update")
-    public String postUpdate(@RequestParam Long number, @RequestParam String newContents) {
-        log.info("POST /update number: " + number + ", newContents: " + newContents);
+    public String postUpdate(@Valid BoardDto dto,
+                             BindingResult bindingResult,
+                             Model model,
+                             @RequestParam String newContents) {
+        log.info("POST /update number: " + dto.getNumber() + ", newContents: " + newContents);
 
-        // 서비스를 통해 게시물 내용 수정 처리
-        boolean isUpdated = boardService.updateBoard(number, newContents);
-        System.out.println("isUpdated: " + isUpdated);
-        if (isUpdated) {
-            return "/list"; // 수정 완료 후 읽기 페이지로 이동
-        } else {
-            // 수정 실패 처리 (이 부분을 적절히 처리하세요)
-            return "/error"; // 에러 페이지로 리다이렉트 또는 예외 처리 방식에 따라 다르게 처리
+        if (bindingResult.hasFieldErrors()) {
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                log.info(error.getField() + " : " + error.getDefaultMessage());
+                model.addAttribute(error.getField(), error.getDefaultMessage());
+            }
+            return "mypage"; // 폼 다시 표시
         }
+
+        boolean isAdd = boardService.updateBoard(dto.getNumber(), newContents);
+
+        if (isAdd) {
+            return "redirect:/mypage";
+        }
+        return "redirect:/list";
+
+    }
+    @PostMapping("/delete")
+    public String delete(@RequestParam Long number, RedirectAttributes redirectAttributes) {
+        log.info("POST /delete number: " + number);
+
+        // 게시물 번호로 해당 게시물 정보 가져오기
+        Optional<Board> boardOptional = boardRepository.findByNum(number);
+
+        if (boardOptional.isPresent()) {
+            // 게시물을 데이터베이스에서 삭제
+            boardRepository.delete(boardOptional.get());
+            redirectAttributes.addFlashAttribute("successMessage", "게시물이 성공적으로 삭제되었습니다.");
+        } else {
+            // 게시물이 존재하지 않을 경우 예외 처리 (이 부분을 적절히 처리하세요)
+            redirectAttributes.addFlashAttribute("errorMessage", "게시물을 찾을 수 없습니다.");
+        }
+
+        return "redirect:/mypage"; // 삭제 후 리스트 페이지로 리다이렉트
     }
 }

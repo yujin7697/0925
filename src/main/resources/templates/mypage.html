@@ -176,7 +176,9 @@
                         <!-- 세부 버튼들 -->
                         <button>수정</button>
                         <a th:href="@{'/update?number=' + ${board.number}}">수정</a>
+                        <!-- 게시물 삭제 버튼 추가 -->
                         <button>삭제</button>
+
                     </div>
                 </div>
 
@@ -213,6 +215,8 @@
             }
         });
     });
+    
+
 </script>
 
 </body>
